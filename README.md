@@ -19,11 +19,11 @@ directly.
 
 The following minimal example should make things clear:
 
-`from modloader import get_modules
-
-ml = get_modules("./plugins/", "callback")
-for mod in ml:
-  mod.callback()`
+> `from modloader import get_modules`
+> 
+> `ml = get_modules("./plugins/", "callback")`  
+> `for mod in ml:`  
+> `  mod.callback()`
 
 This will execute the `callback()` function for all modules found in the
 `plugins` subdirectory. Note that the directory can be given either as an
