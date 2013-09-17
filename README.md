@@ -5,30 +5,32 @@ Description
 -----------
 
 Provides functionality to load a bunch of python modules matching a certain criteria at runtime.
-It basically acts as a simple plugin mechanism. It allows you to drop python files with a
-particular signature (currently: a specified method) into a directory and import all of those
-files at runtime.
+It basically acts as a simple plugin mechanism. It allows you to drop python files matching a
+certain criteria (currently: either defining a particular function or a subclass of a given
+class) into a directory and import all of those files at runtime.
 
 Usage
 -----
 
-The syntax is pretty easy. You provide a directory and the name of a function
-and you get a list of modules within that directory that contain the specified
-function. These modules are already imported, allowing you to call any method
-directly.
+The syntax is pretty easy. You provide a directory and a specifier and you get a list callable
+elements which you can execute directly. The specifier can be either a string representing a
+function name or a class. In the first case, a list of functions with the same name, found in
+any of the searched modules will be provided. In the second case, a list of objects (not
+instances!) which are a subclass of the given object will be returned. In both cases it will
+be possible to call any element of the list directly.
 
 The following minimal example should make things clear:
 
 ```Python
 from modloader import get_modules
 
-ml = get_modules("./plugins/", "callback")
-for mod in ml:
-  mod.callback()
+funcs = get_modules("./plugins/", "callback")
+for f in funcs:
+  f()
 ```
 
-This will execute the `callback()` function for all modules found in the
-`plugins` subdirectory. Note that the directory can be given either as an
+This will execute the `callback()` function (redubbed "f" in the loop) for all modules found
+in the `plugins` subdirectory. Note that the directory can be given either as an
 absolute or a relative path. Both will be handled as expected.
 
 Known Issues
