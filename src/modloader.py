@@ -22,6 +22,10 @@ def get_modules(directory, function):
     else:
         sys.path.append(join(os.getcwd(), directory))
 
+    # Check that 'function' actually exists
+    if not function:
+        raise ValueError("No specifier provided (was empty or 'None')!")
+
     # Create a list of files split into basename and extension
     modulefiles = [splitext(mfile) for mfile in os.listdir(directory)]
 
