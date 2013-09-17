@@ -65,7 +65,7 @@ def get_modules(directory, specifier, pattern=None):
         raise ValueError("No specifier provided (was empty or 'None')!")
 
     modulefiles = find_modules(directory, pattern)
-    modlist = []
+    callables = []
 
     for (modfile, ext) in modulefiles:
         try: # Try to import
@@ -78,11 +78,11 @@ def get_modules(directory, specifier, pattern=None):
                 LOGGER.info("Ignore '__init__.py'.")
             # Only accept modules with given function
             elif type(specifier) is str and has_function(mod_import, specifier):
-                modlist.append(mod_import)
+                callables.append(mod_import)
                 LOGGER.info('Imported module %s from %s%s.' \
                                         % (mod_import.__name__, modfile, ext))
             elif isclass(specifier):
-                objs = get_objects(mod_import, specifier)
+                callables.extend(get_objects(mod_import, specifier))
             else:
                 LOGGER.warning(ERR_MISSINGFUNC % (modfile, specifier))
-    return modlist
+    return callables
