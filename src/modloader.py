@@ -35,16 +35,16 @@ def has_function(module, function):
     else:
         return False
 
-def get_objects(module, obj):
+def has_object(module, obj):
     """
-        Returns all objects defined in module that are a subclass of obj.
+        Checks wether the supplied module has a subclass of the specified object.
     """
     objs = []
     for elem in dir(module):
         a = getattr(module, elem)
         if inspect.isclass(a) and issubclass(a, obj):
-            objs.append(a)
-    return objs
+            return True
+    return False
 
 def get_modules(directory, specifier, pattern=None):
     """
@@ -81,8 +81,10 @@ def get_modules(directory, specifier, pattern=None):
                 callables.append(mod_import)
                 LOGGER.info('Imported module %s from %s%s.' \
                                         % (mod_import.__name__, modfile, ext))
-            elif isclass(specifier):
-                callables.extend(get_objects(mod_import, specifier))
+            elif isclass(specifier) and has_object(mod_import, specifier):
+                callables.append(mod_import)
+                LOGGER.info('Imported module %s from %s%s.' \
+                                        % (mod_import.__name__, modfile, ext))
             else:
                 LOGGER.warning(ERR_MISSINGFUNC % (modfile, specifier))
     return callables

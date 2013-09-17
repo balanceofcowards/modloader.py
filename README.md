@@ -12,12 +12,13 @@ class) into a directory and import all of those files at runtime.
 Usage
 -----
 
-The syntax is pretty easy. You provide a directory and a specifier and you get a list callable
-elements which you can execute directly. The specifier can be either a string representing a
-function name or a class. In the first case, a list of functions with the same name, found in
-any of the searched modules will be provided. In the second case, a list of objects (not
-instances!) which are a subclass of the given object will be returned. In both cases it will
-be possible to call any element of the list directly.
+The syntax is pretty easy. You provide a directory and a specifier and you get a list of all
+modules containing the respective callable elements which you can then execute directly.
+The specifier can be either a string representing a
+function name or a class. In the first case, all modules containing a function with the same
+name will be provided. In the second case, all modules defining a subclass of the given object
+ will be returned. In both cases it will be possible to call any element of the list just by
+`elem.specifier()`.
 
 The following minimal example should make things clear:
 
@@ -45,3 +46,11 @@ This module does also not handle any I/O errors (missing directory, files not
 readable, files removed during execution, ...). This is on purpose. Anything
 going wrong with file access should best be handled by the one who calls this
 module.
+
+Bugs
+----
+
+The current concept for module loading via classes doesn't work as envisioned, yet. While the
+correct classes are loaded, the user currently has to find the correct classname himself. This
+is made even more complicated as modules can contain any number of subclasses of any given class
+(whereas they can only contain one function with a certain name). Needs more thought.
