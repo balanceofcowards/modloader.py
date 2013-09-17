@@ -1,5 +1,6 @@
 # coding=utf-8
 import sys, os, logging, re
+from inspect import isclass
 from os.path import splitext, join, isabs
 
 ERR_IMPORT = "File import of module %s%s has failed."
@@ -25,8 +26,25 @@ def find_modules(directory, pattern=None):
 
     return mfs
 
-def get_by_function():
-    pass
+def has_function(module, function):
+    """
+        Checks wether the supplied module has the specified string as function.
+    """
+    if hasattr(module, function):
+        return callable(getattr(module, function))
+    else:
+        return False
+
+def get_objects(module, obj):
+    """
+        Returns all objects defined in module that are a subclass of obj.
+    """
+    objs = []
+    for elem in dir(module):
+        a = getattr(module, elem)
+        if inspect.isclass(a) and issubclass(a, obj):
+            objs.append(a)
+    return objs
 
 def get_modules(directory, specifier, pattern=None):
     """
@@ -34,9 +52,7 @@ def get_modules(directory, specifier, pattern=None):
 
         TODO: Prüfen, dass 'directory' existiert
         TODO: Mehrere Funktionen unterstützen
-        TODO: Klassen unterstützen
         TODO: I18N, L10N
-        TODO: Use inspect module
     """
     # Add directory to PYTHONPATH
     if isabs(directory):
@@ -61,15 +77,12 @@ def get_modules(directory, specifier, pattern=None):
             if (modfile == '__init__'):
                 LOGGER.info("Ignore '__init__.py'.")
             # Only accept modules with given function
-            elif (hasattr(mod_import, specifier)):
-                if (hasattr(mod_import, "NOEXEC")):
-                    if (mod_import.NOEXEC): # NOEXEC? -> Skip module
-                        LOGGER.info("Skip module %s." \
-                                                % mod_import.__name__)
-                        continue
+            elif type(specifier) is str and has_function(mod_import, specifier):
                 modlist.append(mod_import)
                 LOGGER.info('Imported module %s from %s%s.' \
                                         % (mod_import.__name__, modfile, ext))
+            elif isclass(specifier):
+                objs = get_objects(mod_import, specifier)
             else:
                 LOGGER.warning(ERR_MISSINGFUNC % (modfile, specifier))
     return modlist
