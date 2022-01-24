@@ -6,6 +6,7 @@ os.sys.path.insert(0, pd)
 import modloader
 import tempfile
 import random
+import shutil
 
 MOD_NAMED_FUNC = """
 def myfunction(a):
@@ -63,11 +64,7 @@ class TestSingleFunction(unittest.TestCase):
         """
             Remove temporary files again.
         """
-        os.remove(self.ifile)
-        os.remove(self.mfile)
-        if os.path.exists(self.mfilec):
-            os.remove(self.mfilec)
-        os.rmdir(self.td)
+        shutil.rmtree(self.td)
 
 if __name__ == '__main__':
     unittest.main()
